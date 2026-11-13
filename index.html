@@ -4,113 +4,458 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Reader - Đọc &amp; Nghe web | EZA Studio</title>
+  <meta name="description" content="Web Reader của EZA Studio - Ứng dụng đọc nội dung web, chế độ đọc sạch (Reader Mode), nghe giọng đọc tự nhiên TTS và lưu trang ngoại tuyến trên iOS." />
   <style>
+    :root {
+      --bg: #0b1120;
+      --bg-soft: #111827;
+      --card: rgba(30, 41, 59, 0.72);
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #818cf8;
+      --green: #34d399;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f5f7fb;
-      color: #1e293b;
-      line-height: 1.6;
-      padding: 32px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(800px 500px at 90% 10%, rgba(129, 140, 248, 0.16), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
     }
-    .container {
-      max-width: 820px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 36px 28px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    /* Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(11, 17, 32, 0.78);
+      border-bottom: 1px solid var(--border);
     }
-    .badge {
-      display: inline-block;
-      background: #e0f2fe;
-      color: #0369a1;
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+    }
+
+    /* Hero */
+    .hero {
+      padding: 64px 0 48px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; padding: 42px 0 32px; }
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      color: #7dd3fc;
       font-size: 13px;
       font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 999px;
-      margin-bottom: 12px;
+      margin-bottom: 18px;
     }
-    h1 { font-size: 28px; color: #0f172a; margin-bottom: 10px; }
-    .subtitle { color: #475569; font-size: 16px; margin-bottom: 28px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
+    h1 {
+      font-size: clamp(30px, 4.5vw, 44px);
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lead {
+      font-size: 16.5px;
+      color: var(--muted);
       margin-bottom: 28px;
+      max-width: 560px;
     }
-    .card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 18px;
-    }
-    .card h3 { font-size: 16px; margin-bottom: 6px; color: #0f172a; }
-    .card p { font-size: 14px; color: #475569; }
-    .actions {
+    .cta-row {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .btn {
-      display: inline-block;
-      text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 15px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
-    .btn-primary { background: #0284c7; color: #ffffff; }
-    .btn-secondary { background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; }
-    footer {
-      border-top: 1px solid #e2e8f0;
-      padding-top: 18px;
+    .btn:hover { transform: translateY(-1px); opacity: 0.95; }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.32);
+    }
+    .btn-ghost {
+      background: rgba(30, 41, 59, 0.8);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+    }
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 13.5px;
+      color: #cbd5e1;
+    }
+    .trust-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Mockup Card */
+    .preview-card {
+      background: linear-gradient(160deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
       font-size: 13px;
-      color: #64748b;
+      color: var(--muted);
+    }
+    .preview-badge {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(52, 211, 153, 0.14);
+      color: var(--green);
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .preview-article {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .preview-article h4 { font-size: 15px; margin-bottom: 8px; color: #f8fafc; }
+    .preview-article p { font-size: 13.5px; color: #94a3b8; line-height: 1.6; }
+    .player-bar {
+      background: rgba(2, 132, 199, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .player-meta { font-size: 13px; }
+    .player-meta strong { display: block; color: #f8fafc; }
+    .player-meta span { color: #7dd3fc; font-size: 12px; }
+    .player-btns { display: flex; gap: 8px; font-size: 13px; }
+    .p-chip {
+      padding: 6px 10px;
+      border-radius: 9px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    /* Sections */
+    section.block { padding: 48px 0; }
+    .sec-head { text-align: center; margin-bottom: 32px; }
+    .sec-head h2 { font-size: 28px; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .sec-head p { color: var(--muted); font-size: 15px; max-width: 600px; margin: 0 auto; }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 860px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      transform: translateY(-2px);
+    }
+    .icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: rgba(56, 189, 248, 0.14);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .card h3 { font-size: 17px; margin-bottom: 8px; color: #f8fafc; }
+    .card p { font-size: 14px; color: var(--muted); }
+
+    /* Steps */
+    .steps-box {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 26px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 760px) { .steps-box { grid-template-columns: 1fr; } }
+    .step-num {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .step h4 { font-size: 16px; margin-bottom: 6px; }
+    .step p { font-size: 14px; color: var(--muted); }
+
+    /* Support Banner */
+    .support-banner {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(79, 70, 229, 0.18));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      padding: 32px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .support-banner h3 { font-size: 21px; margin-bottom: 6px; }
+    .support-banner p { color: #cbd5e1; font-size: 14.5px; max-width: 560px; }
+
+    /* Footer */
+    footer {
+      margin-top: 28px;
+      border-top: 1px solid var(--border);
+      padding: 26px 0 40px;
+      color: var(--muted);
+      font-size: 13.5px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 8px;
+      align-items: center;
+      gap: 12px;
     }
-    footer a { color: #0284c7; text-decoration: none; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+    .footer-links a { color: #7dd3fc; }
+    .footer-links a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <main class="container">
-    <span class="badge">EZA Studio</span>
-    <h1>Web Reader - Đọc &amp; Nghe web</h1>
-    <p class="subtitle">
-      Ứng dụng hỗ trợ đọc nội dung web, đọc truyện và nghe giọng đọc tự nhiên (TTS) tiện lợi mọi lúc mọi nơi trên iOS.
-    </p>
+  <header>
+    <div class="wrap nav">
+      <a href="#" class="brand">
+        <span class="brand-icon">🎧</span>
+        <span>EZA Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Tính năng</a>
+        <a href="#how-it-works">Cách dùng</a>
+        <a href="#support">Hỗ trợ</a>
+        <a href="https://sites.google.com/view/ezastudio-privacypolicy" target="_blank" rel="noopener">Quyền riêng tư</a>
+      </nav>
+    </div>
+  </header>
 
-    <section class="grid">
-      <div class="card">
-        <h3>Nghe bằng giọng nói tự nhiên</h3>
-        <p>Chuyển đổi nội dung văn bản thành âm thanh (Audiobook/TTS), hỗ trợ tự động phát chương kế tiếp.</p>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <span class="pill">✨ EZA Studio • Web Reader cho iOS</span>
+        <h1>Đọc &amp; Nghe mọi trang web mượt mà như sách nói</h1>
+        <p class="lead">
+          Web Reader giúp bạn biến mọi bài báo, trang truyện hoặc tài liệu trên web thành trải nghiệm đọc gọn gàng (Reader Mode) và nghe bằng giọng đọc tự nhiên (TTS) ngay trên iPhone, iPad.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://apps.apple.com/app/id6827974231" target="_blank" rel="noopener">
+             Tải trên App Store
+          </a>
+          <a class="btn btn-ghost" href="https://sites.google.com/view/ezastudio-privacypolicy" target="_blank" rel="noopener">
+            🔒 Chính sách bảo mật &amp; Hỗ trợ
+          </a>
+        </div>
+        <div class="trust-row">
+          <span>✅ Không cần tạo tài khoản</span>
+          <span>✅ Lưu dữ liệu cục bộ</span>
+          <span>✅ Đọc &amp; nghe ngoại tuyến</span>
+        </div>
       </div>
-      <div class="card">
-        <h3>Tùy biến giao diện &amp; bảo vệ mắt</h3>
-        <p>Điều chỉnh cỡ chữ, màu nền, chế độ đọc thoải mái cho mắt khi sử dụng lâu.</p>
-      </div>
-      <div class="card">
-        <h3>Gọn nhẹ &amp; dễ sử dụng</h3>
-        <p>Quản lý danh sách đọc, lưu vị trí đang đọc/nghe để tiếp tục nhanh chóng.</p>
+
+      <div class="preview-card" aria-hidden="true">
+        <div class="preview-top">
+          <span>📖 Reader Mode • Trình nghe TTS</span>
+          <span class="preview-badge">Đang phát</span>
+        </div>
+        <div class="preview-article">
+          <h4>Chế độ đọc tập trung, lọc quảng cáo rác</h4>
+          <p>
+            Tự động trích xuất phần nội dung chính của bài viết, hỗ trợ tăng giảm cỡ chữ, đổi nền tối bảo vệ mắt và đọc liên tục từng đoạn văn bản rõ ràng.
+          </p>
+        </div>
+        <div class="player-bar">
+          <div class="player-meta">
+            <strong>Giọng đọc tự nhiên</strong>
+            <span>Tự động chuyển chương • Khóa màn hình</span>
+          </div>
+          <div class="player-btns">
+            <span class="p-chip">1.2x</span>
+            <span class="p-chip">⏸ Tạm dừng</span>
+          </div>
+        </div>
       </div>
     </section>
 
-    <div class="actions">
-      <a class="btn btn-primary" href="https://apps.apple.com/app/id6827974231" target="_blank" rel="noopener">
-        Xem trên App Store
-      </a>
-      <a class="btn btn-secondary" href="https://sites.google.com/view/ezastudio-privacypolicy" target="_blank" rel="noopener">
-        Chính sách bảo mật &amp; Hỗ trợ
-      </a>
-    </div>
+    <section id="features" class="block">
+      <div class="sec-head">
+        <h2>Tính năng nổi bật</h2>
+        <p>Thiết kế tối giản, tập trung vào sự thoải mái khi đọc và nghe trong thời gian dài.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon-box">🎧</div>
+          <h3>Nghe giọng nói TTS</h3>
+          <p>Chuyển văn bản web thành giọng đọc rõ ràng, tùy chỉnh tốc độ, cao độ và tự động chuyển chương kế tiếp.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">📖</div>
+          <h3>Reader Mode sạch sẽ</h3>
+          <p>Tự động loại bỏ khung thừa khi đọc truyện hoặc tin tức, giữ lại phần chữ mạch lạc dễ theo dõi.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🎨</div>
+          <h3>Tùy biến giao diện</h3>
+          <p>Chỉnh cỡ chữ, khoảng cách dòng, nền sáng, nền vàng dịu mắt hoặc chế độ ban đêm chống chói.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🌧️</div>
+          <h3>Âm thanh nền thư giãn</h3>
+          <p>Kết hợp âm thanh nền nhẹ nhàng khi đọc hoặc nghe truyện, hỗ trợ điều khiển ngay trên màn hình khóa.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">📥</div>
+          <h3>Lưu trang ngoại tuyến</h3>
+          <p>Lưu nhanh nội dung yêu thích ngay trên thiết bị để đọc hoặc nghe lại mọi lúc không cần kết nối mạng.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🛡️</div>
+          <h3>Riêng tư &amp; An toàn</h3>
+          <p>Lịch sử duyệt, dấu trang và tiến độ đọc lưu cục bộ trên máy bạn. Không yêu cầu đăng nhập tài khoản.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="block">
+      <div class="sec-head">
+        <h2>Trải nghiệm chỉ trong 3 bước</h2>
+        <p>Thao tác đơn giản ngay từ màn hình chính của ứng dụng.</p>
+      </div>
+      <div class="steps-box">
+        <div class="step">
+          <span class="step-num">1</span>
+          <h4>Mở trang web bất kỳ</h4>
+          <p>Nhập từ khóa tìm kiếm hoặc dán trực tiếp đường dẫn trang tin, tiểu thuyết vào thanh địa chỉ.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <h4>Bật chế độ Đọc &amp; Nghe</h4>
+          <p>Chạm biểu tượng Tai nghe để kích hoạt Reader Mode gọn gàng và bắt đầu nghe nội dung tức thì.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <h4>Lưu vị trí &amp; Nghe ngoại tuyến</h4>
+          <p>Tự động nhớ vị trí đang đọc/nghe hoặc lưu trang về máy để tiếp tục thưởng thức bất cứ lúc nào.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="support" class="block">
+      <div class="support-banner">
+        <div>
+          <h3>EZA Studio — Hỗ trợ người dùng</h3>
+          <p>
+            Chúng tôi phát triển các ứng dụng đọc và tiện ích gọn nhẹ như Web Reader và NovelCraft. Mọi góp ý hoặc yêu cầu hỗ trợ kỹ thuật, vui lòng liên hệ trực tiếp qua email bên cạnh.
+          </p>
+        </div>
+        <a class="btn btn-primary" href="mailto:bkcnnk1@gmail.com">✉️ Gửi email hỗ trợ</a>
+      </div>
+    </section>
 
     <footer>
-      <span>&copy; 2026 EZA Studio. All rights reserved.</span>
-      <span>Hỗ trợ: <a href="mailto:bkcnnk1@gmail.com">bkcnnk1@gmail.com</a></span>
+      <span>&copy; 2026 EZA Studio • Thái Nguyên, Việt Nam.</span>
+      <div class="footer-links">
+        <a href="https://apps.apple.com/app/id6827974231" target="_blank" rel="noopener">App Store</a>
+        <a href="https://sites.google.com/view/ezastudio-privacypolicy" target="_blank" rel="noopener">Chính sách quyền riêng tư</a>
+        <a href="mailto:bkcnnk1@gmail.com">bkcnnk1@gmail.com</a>
+      </div>
     </footer>
   </main>
 </body>
